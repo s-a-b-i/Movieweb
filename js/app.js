@@ -26,6 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentApi = APIURL;
   let isSearch = false;
 
+  // Debounce function to limit API calls
+  const debounce = (func, delay) => {
+      let timeoutId;
+      return (...args) => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => func.apply(null, args), delay);
+      };
+  };
+
   const getMovie = async (page = 1) => {
       try {
           loading.style.display = "block";
@@ -82,6 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
       getMovie(currentPage);
   };
 
+  // Debounced search function
+  const debouncedSearch = debounce(handleSearch, 300);
+
+  // Trigger search on input change
+  searchInput.addEventListener("input", debouncedSearch);
+
+  // Keep the button and Enter key functionality
   searchBtn.addEventListener("click", handleSearch);
 
   searchInput.addEventListener("keyup", (event) => {
